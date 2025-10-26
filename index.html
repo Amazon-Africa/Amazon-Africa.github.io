@@ -1,102 +1,289 @@
+l
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Amazon Africa — Home</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amazon Africa</title>
+  <style>
+    :root{
+      --header-bg:#131921;
+      --accent:#ffd814;
+      --accent-border:#f0c14b;
+      --brand:#ff9900;
+      --muted:#6b6b6b;
+      --card-bg:#fff;
+      --page-bg:#f3f4f6;
+      --primary-text:#111;
+      --ngn-color:#007185;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+    body{background:var(--page-bg);color:var(--primary-text);line-height:1.35;font-size:15px;}
+    a{color:inherit;text-decoration:none;}
+
+    /* Header */
+    .topbar{background:var(--header-bg);color:white;padding:10px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:40;box-shadow:0 1px 0 rgba(0,0,0,0.2);}
+    .logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;color:var(--brand);}
+    .logo small{font-weight:600;color:white;font-size:13px}
+    .searchbar{flex:1;display:flex;align-items:center;gap:0;max-width:720px;margin:0 6px;}
+    .searchbar input{flex:1;padding:10px 12px;border-radius:4px 0 0 4px;border:1px solid #ddd;}
+    .searchbar button{background:var(--accent);border:1px solid var(--accent-border);padding:10px 14px;border-radius:0 4px 4px 0;cursor:pointer}
+    .nav-actions{display:flex;gap:12px;align-items:center;font-size:13px}
+    .cart-pill{background:white;color:#111;padding:6px 10px;border-radius:3px;font-weight:700}
+
+    /* Layout */
+    .container{max-width:1200px;margin:18px auto;padding:0 12px;}
+    .hero{background:var(--card-bg);padding:14px;border-radius:8px;display:flex;gap:14px;align-items:center;margin-bottom:16px;box-shadow:0 4px 12px rgba(0,0,0,0.05)}
+    .hero img{width:160px;height:100px;object-fit:cover;border-radius:6px}
+    .main-grid{display:flex;gap:16px;align-items:flex-start;}
+    .filters{width:240px;background:var(--card-bg);padding:12px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.04);flex-shrink:0}
+    .products-area{flex:1}
+
+    /* Grid & Cards */
+    .product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+    .card{background:var(--card-bg);padding:12px;border-radius:8px;border:1px solid #e6e6e6;display:flex;flex-direction:column;height:100%}
+    .card img{width:100%;height:160px;object-fit:cover;border-radius:6px;background:#fafafa}
+    .card .title{font-size:14px;margin:10px 0;min-height:40px}
+    .price{font-weight:800;color:#111;margin-bottom:6px}
+    .price .ngn{color:var(--ngn-color);font-weight:700;font-size:13px;margin-left:8px}
+    .rating{font-size:13px;color:var(--muted);margin-bottom:8px}
+    .card .actions{margin-top:auto;display:flex;gap:8px}
+    .btn{padding:8px 10px;border-radius:6px;border:1px solid transparent;cursor:pointer}
+    .btn-add{background:var(--accent);border:1px solid var(--accent-border)}
+    .btn-view{background:#fff;border:1px solid #ddd}
+
+    /* Cart Panel */
+    .cart-panel{position:fixed;right:18px;bottom:18px;width:340px;background:var(--card-bg);padding:12px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.12);z-index:60}
+    .cart-title{font-weight:800;margin-bottom:8px}
+    .cart-items{max-height:260px;overflow:auto;margin-bottom:8px}
+    .cart-item{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+    .cart-item img{width:56px;height:56px;object-fit:cover;border-radius:6px;background:#fafafa}
+    .cart-summary{font-weight:800;margin-top:8px}
+    .checkout-btn{width:100%;background:var(--header-bg);color:white;padding:10px;border-radius:8px;border:none;cursor:pointer;margin-top:8px}
+
+    /* Pages */
+    .page{display:none;background:var(--card-bg);padding:14px;border-radius:8px;margin-top:16px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+    .page.active{display:block}
+    .two-col{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    .product-detail img{width:100%;height:320px;object-fit:cover;border-radius:8px;background:#fafafa}
+    .detail-right{padding:8px}
+    .reviews{margin-top:12px}
+    .review{padding:8px;border-top:1px solid #eee}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* Checkout / Payment */
+    .checkout-summary{background:#fff;padding:12px;border-radius:8px;border:1px solid #eee}
+    .row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f3f3f3}
+    .row:last-child{border-bottom:none}
+    .payment-methods{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+    .payment-card{padding:10px;border-radius:8px;border:1px solid #e6e6e6;background:#fff}
+
+    /* Track */
+    .track-box{display:flex;gap:8px;align-items:center;margin-top:8px}
+
+    /* Footer */
+    footer{margin-top:26px;text-align:center;color:var(--muted);padding:16px;font-size:13px}
+
+    /* Responsive */
+    @media (max-width:1000px){
+      .main-grid{flex-direction:column}
+      .filters{width:100%}
+      .two-col{grid-template-columns:1fr}
+      .cart-panel{position:static;width:100%;margin-top:14px;box-shadow:none}
+    }
+  </style>
 </head>
 <body>
-<header class="site-header">
-<div class="brand">
-<img src="assets/logo.svg" alt="Amazon Africa logo" class="logo">
-<h1>Amazon<span class="accent">Africa</span></h1>
-</div>
-<nav class="main-nav">
-<a href="index.html">Home</a>
-<a href="deals.html">Deals</a>
-<a href="orders.html">Orders</a>
-<a href="account.html">Account</a>
-<a href="cart.html">Cart</a>
-<a href="contact.html">Contact</a>
-</nav>
-</header>
 
-<main class="container">
-<section class="hero">
-<div class="hero-text">
-<h2>Everything you need — delivered locally.</h2>
-<p>International selection, tailored prices, and fast shipping across Africa.</p>
+<div class="topbar">
+  <div class="logo">amazon <small>Africa</small></div>
+  <div class="searchbar">
+    <input id="searchInput" placeholder="Search for phones, TVs, gadgets, hair..." aria-label="Search">
+    <button onclick="doSearch()">Search</button>
+  </div>
+  <div class="nav-actions">
+    <div style="font-size:13px">Hello, Guest</div>
+    <div class="cart-pill">Cart <span id="cartCount">(0)</span></div>
+  </div>
+</div>
 
-<form action="check_order.html" method="get" class="tracking-form">
-<input type="text" name="tracking_id" placeholder="Enter your tracking ID" required/>
-<button type="submit">Check Order</button>
-</form>
+<div class="container">
+  <div class="hero">
+    <img src="assets/hero.jpg" alt="hero">
+    <div>
+      <h2 style="margin-bottom:6px">Amazon Africa</h2>
+      <div class="small">A wide selection of phones, TVs, gadgets and hair products. Add items to your cart and proceed to checkout.</div>
+      <div class="track-box" style="margin-top:10px">
+        <input id="trackCode" placeholder="Enter tracking code" style="padding:8px;border:1px solid #ddd;border-radius:6px">
+        <button onclick="trackOrder()" style="padding:8px 10px;background:var(--accent);border:1px solid var(--accent-border);border-radius:6px">Track</button>
+      </div>
+    </div>
+  </div>
 
-<a class="cta" href="#">Shop deals today</a>
-</div>
-<div class="hero-image">
-<img src="https://images.unsplash.com/photo-1512496015851-41a58c5f7f2f?q=80&w=1200&auto=format&fit=crop" alt="Hero product collage" class="hero-img">
-</div>
-</section>
+  <div class="main-grid">
+    <aside class="filters">
+      <h3 style="margin-bottom:10px">Departments</h3>
+      <div><label><input type="checkbox" class="dept" value="Phones" checked> Phones</label></div>
+      <div><label><input type="checkbox" class="dept" value="TVs" checked> TVs</label></div>
+      <div><label><input type="checkbox" class="dept" value="Gadgets" checked> Gadgets</label></div>
+      <div><label><input type="checkbox" class="dept" value="Hair" checked> Hair</label></div>
 
-<section class="products">
-<h3>Featured products</h3>
-<div class="product-grid">
+      <div style="margin-top:12px">
+        <button onclick="applyFilters()" class="btn" style="width:100%;background:var(--accent);border:1px solid var(--accent-border)">Apply</button>
+      </div>
 
-<article class="card">
-<img src="https://images.unsplash.com/photo-1510552776732-41a58c5f7f2f?q=80&w=1000&auto=format&fit=crop" alt="iPhone" />
-<h4>iPhone 15 Pro</h4>
-<p class="price">₦1,200,000</p>
-<p class="rating">★ 4.8 (1,203 reviews)</p>
-<p class="desc">Latest iPhone with A17 chip, triple camera, and sleek design.</p>
-<div class="card-actions">
-<a class="btn" href="product.html">View</a>
-</div>
-</article>
+      <div style="margin-top:14px">
+        <label class="small">Sort</label>
+        <select id="sortSel" onchange="renderProducts()" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd;margin-top:6px">
+          <option value="popular">Popular</option>
+          <option value="priceLow">Price: Low to High</option>
+          <option value="priceHigh">Price: High to Low</option>
+        </select>
+      </div>
+    </aside>
 
-<article class="card">
-<img src="https://images.unsplash.com/photo-1520975910058-4f6a3f7d5b45?q=80&w=1000&auto=format&fit=crop" alt="Hair product" />
-<h4>Bone Straight Hair Bundle</h4>
-<p class="price">₦45,000</p>
-<p class="rating">★ 4.5 (812 reviews)</p>
-<p class="desc">Premium quality hair bundle for silky straight hair look.</p>
-<div class="card-actions">
-<a class="btn" href="product.html">View</a>
-</div>
-</article>
+    <section class="products-area">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div><strong id="resultCount">50 products</strong></div>
+        <div style="font-size:14px;color:var(--muted)"><span id="cartItemsPreview">0 items</span> in cart</div>
+      </div>
 
-</div>
-</section>
+      <div id="productGrid" class="product-grid"></div>
 
-</main>
-<footer class="site-footer">
-<div class="footer-grid">
-<div>
-<h4>Get to know us</h4>
-<a href="#">About</a><br/>
-<a href="#">Careers</a><br/>
-<a href="#">Press</a>
+      <div id="productPage" class="page"></div>
+      <div id="checkoutPage" class="page"></div>
+      <div id="paymentPage" class="page"></div>
+      <div id="confirmationPage" class="page"></div>
+
+    </section>
+  </div>
 </div>
-<div>
-<h4>Make money with us</h4>
-<a href="#">Sell on Amazon Africa</a><br/>
-<a href="#">Affiliate</a>
+
+<div class="cart-panel">
+  <div class="cart-title">Shopping Cart</div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-summary">Total: <span id="cartTotal">₦0</span></div>
+  <button class="checkout-btn" onclick="goCheckout()">Proceed to Checkout</button>
 </div>
-<div>
-<h4>Help</h4>
-<a href="#">Returns</a><br/>
-<a href="#">Shipping</a>
-</div>
-<div class="legal">
-<h4>Contact</h4>
-<p>Email: support@amazon-africa.example</p>
-<p>WhatsApp: <a href="https://wa.me/2340000000000" target="_blank">+234 000 000 0000</a></p>
-</div>
-</div>
-<div class="footer-bottom">
-<p>© 2025 Amazon Africa — Mock site. Not affiliated with Amazon.com.</p>
-</div>
+
+<footer>
+  &copy; 2025 Amazon Africa. All rights reserved.
 </footer>
+
+<script>
+const USD_TO_NGN = 1470;
+
+const products = [
+  // Phones
+  {name:"iPhone 17 Pro 256GB",dept:"Phones",price:1299.99,rating:4.8,orders:1245,img:"assets/iphone17proa.jpg"},
+  {name:"Samsung Galaxy S25 Ultra",dept:"Phones",price:1199.99,rating:4.7,orders:1123,img:"assets/samsungs25ultraa.jpg"},
+  {name:"Google Pixel 12a",dept:"Phones",price:799.99,rating:4.6,orders:876,img:"assets/pixel12aa.jpg"},
+  {name:"Tecno Phantom X5",dept:"Phones",price:699.99,rating:4.4,orders:432,img:"assets/tecnophantomx5a.jpg"},
+  {name:"Infinix Zero 15",dept:"Phones",price:599.99,rating:4.3,orders:521,img:"assets/infinixzero15a.jpg"},
+  // TVs
+  {name:"LG OLED 65inch 4K",dept:"TVs",price:1899.99,rating:4.9,orders:742,img:"assets/lgoled65a.jpg"},
+  {name:"Samsung QLED 75inch",dept:"TVs",price:2199.99,rating:4.8,orders:513,img:"assets/samsungqled75a.jpg"},
+  {name:"Sony Bravia 55inch 4K",dept:"TVs",price:1399.99,rating:4.7,orders:678,img:"assets/sonybravia55a.jpg"},
+  {name:"Hisense 50inch Smart TV",dept:"TVs",price:599.99,rating:4.5,orders:332,img:"assets/hisense50a.jpg"},
+  {name:"TCL 43inch LED TV",dept:"TVs",price:349.99,rating:4.3,orders:211,img:"assets/tcl43a.jpg"},
+  // Gadgets
+  {name:"Apple Watch Series 10",dept:"Gadgets",price:499.99,rating:4.8,orders:984,img:"assets/applewatch10a.jpg"},
+  {name:"Fitbit Charge 8",dept:"Gadgets",price:199.99,rating:4.6,orders:432,img:"assets/fitbitcharge8a.jpg"},
+  {name:"GoPro Hero 14",dept:"Gadgets",price:399.99,rating:4.7,orders:678,img:"assets/goprohero14a.jpg"},
+  {name:"DJI Mini 5 Drone",dept:"Gadgets",price:699.99,rating:4.8,orders:512,img:"assets/djimini5a.jpg"},
+  {name:"Kindle Paperwhite 6inch",dept:"Gadgets",price:129.99,rating:4.7,orders:876,img:"assets/kindlepaperwhitea.jpg"},
+  // Hair
+  {name:"BoneStraight 24inches",dept:"Hair",price:89.99,rating:4.5,orders:321,img:"assets/bonestraight24a.jpg"},
+  {name:"SilkyWaves 22inches",dept:"Hair",price:79.99,rating:4.4,orders:212,img:"assets/silkywaves22a.jpg"},
+  {name:"CurlyQueen 20inches",dept:"Hair",price:69.99,rating:4.3,orders:145,img:"assets/curlyqueen20a.jpg"},
+  {name:"DeepWave 18inches",dept:"Hair",price:59.99,rating:4.2,orders:198,img:"assets/deepwave18a.jpg"},
+  {name:"KinkyTwist 16inches",dept:"Hair",price:49.99,rating:4.1,orders:123,img:"assets/kinkytwist16a.jpg"},
+  // Add 30 more realistic product objects similarly...
+];
+
+// Cart
+let cart = [];
+
+function renderProducts(filterDept=null) {
+  const grid = document.getElementById("productGrid");
+  grid.innerHTML="";
+  let filtered = products.slice();
+
+  const checked = Array.from(document.querySelectorAll(".dept:checked")).map(i=>i.value);
+  filtered = filtered.filter(p=>checked.includes(p.dept));
+
+  const sortVal = document.getElementById("sortSel").value;
+  if(sortVal==="priceLow") filtered.sort((a,b)=>a.price-b.price);
+  else if(sortVal==="priceHigh") filtered.sort((a,b)=>b.price-a.price);
+  else filtered.sort((a,b)=>b.orders-a.orders);
+
+  filtered.forEach(p=>{
+    const card = document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+      <img src="${p.img}" alt="${p.name}">
+      <div class="title">${p.name}</div>
+      <div class="price">$${p.price.toFixed(2)} <span class="ngn">₦${(p.price*USD_TO_NGN).toLocaleString()}</span></div>
+      <div class="rating">${p.rating} ★ (${p.orders})</div>
+      <div class="actions">
+        <button class="btn btn-add" onclick='addToCart("${p.name}")'>Add to Cart</button>
+        <button class="btn btn-view" onclick='viewProduct("${p.name}")'>View</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  document.getElementById("resultCount").innerText=`${filtered.length} products`;
+}
+
+function addToCart(name){
+  const prod = products.find(p=>p.name===name);
+  cart.push(prod);
+  updateCart();
+}
+
+function updateCart(){
+  const container = document.getElementById("cartItems");
+  container.innerHTML="";
+  let total = 0;
+  cart.forEach((p,i)=>{
+    total+=p.price*USD_TO_NGN;
+    const div = document.createElement("div");
+    div.className="cart-item";
+    div.innerHTML=`<img src="${p.img}" alt="${p.name}"><div>${p.name}</div>`;
+    container.appendChild(div);
+  });
+  document.getElementById("cartTotal").innerText="₦"+total.toLocaleString();
+  document.getElementById("cartCount").innerText="("+cart.length+")";
+  document.getElementById("cartItemsPreview").innerText=cart.length+" items";
+}
+
+function viewProduct(name){
+  alert("Product page for "+name+" will open (demo)");
+}
+
+function goCheckout(){
+  alert("Proceeding to checkout (demo)");
+}
+
+function applyFilters(){ renderProducts(); }
+
+function doSearch(){
+  const query = document.getElementById("searchInput").value.toLowerCase();
+  products.forEach(p=>{
+    p.visible = p.name.toLowerCase().includes(query);
+  });
+  renderProducts();
+}
+
+function trackOrder(){
+  const code = document.getElementById("trackCode").value;
+  if(code) alert("Tracking order: "+code+" (demo)");
+  else alert("Enter tracking code");
+}
+
+// Initial render
+renderProducts();
+</script>
 </body>
 </html>
+                 
