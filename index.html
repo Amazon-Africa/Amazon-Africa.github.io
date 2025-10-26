@@ -282,11 +282,12 @@ default: alert('Product page not found for: ' + name);
 }
 }
   
-
 function goCheckout(){
-  alert("Proceeding to checkout (demo)");
+  // Save cart data in localStorage to use on the checkout page
+  localStorage.setItem('cartItems', JSON.stringify(cart));
+  window.location.href = "checkout.html";
 }
-
+  
 function applyFilters(){ renderProducts(); }
 
 function doSearch(){
@@ -310,6 +311,7 @@ renderProducts();
 </html>
 
                  
+
 
 
 
