@@ -11,6 +11,9 @@
   th, td { padding: 12px; border-bottom: 1px solid #ccc; text-align: left; }
   th { background-color: #f9f9f9; }
   .total { font-weight: bold; font-size: 1.2em; margin-top: 20px; }
+  .btn { padding: 12px 20px; margin: 10px 10px 0 0; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; color: #fff; }
+  .btn-card { background-color: #3498db; }
+  .btn-transfer { background-color: #2ecc71; }
 </style>
 </head>
 <body>
@@ -18,13 +21,19 @@
 <div id="cartTableContainer"></div>
 <p class="total" id="cartTotalDisplay"></p>
 
+<!-- Payment buttons -->
+<div>
+  <button class="btn btn-card" onclick="payCard()">Pay with Card</button>
+  <button class="btn btn-transfer" onclick="payTransfer()">Pay with Transfer</button>
+</div>
+
 <script>
 const USD_TO_NGN = 1470;
 
 // Retrieve cart from localStorage
 let cart = JSON.parse(localStorage.getItem('cartItems')) || [];
 
-// Display cart items in a table
+// Display cart items
 if(cart.length === 0){
   document.getElementById('cartTableContainer').innerHTML = "<p>Your cart is empty.</p>";
 } else {
@@ -44,6 +53,15 @@ if(cart.length === 0){
   tableHTML += '</table>';
   document.getElementById('cartTableContainer').innerHTML = tableHTML;
   document.getElementById('cartTotalDisplay').innerText = `Total to Pay: ₦${total.toLocaleString()} (${cart.length} item${cart.length>1?'s':''})`;
+}
+
+// Payment button functions
+function payCard(){
+  window.location.href = 'card.html';
+}
+
+function payTransfer(){
+  window.location.href = 'transfer.html';
 }
 </script>
 </body>
