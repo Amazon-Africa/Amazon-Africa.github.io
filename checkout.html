@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 40px; }
+  h1 { color: #e67e22; }
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  th, td { padding: 12px; border-bottom: 1px solid #ccc; text-align: left; }
+  th { background-color: #f9f9f9; }
+  .total { font-weight: bold; font-size: 1.2em; margin-top: 20px; }
+</style>
+</head>
+<body>
+<h1>Checkout</h1>
+<div id="cartTableContainer"></div>
+<p class="total" id="cartTotalDisplay"></p>
+
+<script>
+const USD_TO_NGN = 1470;
+
+// Retrieve cart from localStorage
+let cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+// Display cart items in a table
+if(cart.length === 0){
+  document.getElementById('cartTableContainer').innerHTML = "<p>Your cart is empty.</p>";
+} else {
+  let total = 0;
+  let tableHTML = '<table><tr><th>Product</th><th>Price (USD)</th><th>Price (₦)</th></tr>';
+  
+  cart.forEach(item => {
+    const priceNgn = item.price * USD_TO_NGN;
+    total += priceNgn;
+    tableHTML += `<tr>
+      <td>${item.name}</td>
+      <td>$${item.price.toFixed(2)}</td>
+      <td>₦${priceNgn.toLocaleString()}</td>
+    </tr>`;
+  });
+  
+  tableHTML += '</table>';
+  document.getElementById('cartTableContainer').innerHTML = tableHTML;
+  document.getElementById('cartTotalDisplay').innerText = `Total to Pay: ₦${total.toLocaleString()} (${cart.length} item${cart.length>1?'s':''})`;
+}
+</script>
+</body>
+</html>
