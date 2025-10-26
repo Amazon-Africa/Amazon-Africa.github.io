@@ -257,8 +257,31 @@ function updateCart(){
 }
 
 function viewProduct(name){
-  alert("Product page for "+name+" will open (demo)");
+switch(name){
+case "iPhone 17 Pro 256GB": window.location.href = "products/iphone_17_pro_256gb.html"; break;
+case "Samsung Galaxy S25 Ultra": window.location.href = "products/samsung_galaxy_s25_ultra.html"; break;
+case "Google Pixel 12a": window.location.href = "products/google_pixel_12a.html"; break;
+case "Tecno Phantom X5": window.location.href = "products/tecno_phantom_x5.html"; break;
+case "Infinix Zero 15": window.location.href = "products/infinix_zero_15.html"; break;
+case "LG OLED 65inch 4K": window.location.href = "products/lg_oled_65inch_4k.html"; break;
+case "Samsung QLED 75inch": window.location.href = "products/samsung_qled_75inch.html"; break;
+case "Sony Bravia 55inch 4K": window.location.href = "products/sony_bravia_55inch_4k.html"; break;
+case "Hisense 50inch Smart TV": window.location.href = "products/hisense_50inch_smart_tv.html"; break;
+case "TCL 43inch LED TV": window.location.href = "products/tcl_43inch_led_tv.html"; break;
+case "Apple Watch Series 10": window.location.href = "products/apple_watch_series_10.html"; break;
+case "Fitbit Charge 8": window.location.href = "products/fitbit_charge_8.html"; break;
+case "GoPro Hero 14": window.location.href = "products/gopro_hero_14.html"; break;
+case "DJI Mini 5 Drone": window.location.href = "products/dji_mini_5_drone.html"; break;
+case "Kindle Paperwhite 6inch": window.location.href = "products/kindle_paperwhite_6inch.html"; break;
+case "BoneStraight 24inches": window.location.href = "products/bonestraight_24inches.html"; break;
+case "SilkyWaves 22inches": window.location.href = "products/silkywaves_22inches.html"; break;
+case "CurlyQueen 20inches": window.location.href = "products/curlyqueen_20inches.html"; break;
+case "DeepWave 18inches": window.location.href = "products/deepwave_18inches.html"; break;
+case "KinkyTwist 16inches": window.location.href = "products/kinkytwist_16inches.html"; break;
+default: alert('Product page not found for: ' + name);
 }
+}
+  
 
 function goCheckout(){
   alert("Proceeding to checkout (demo)");
@@ -287,3 +310,4 @@ renderProducts();
 </html>
 
                  
+
