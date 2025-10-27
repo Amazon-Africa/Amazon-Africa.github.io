@@ -68,10 +68,6 @@
       <input type="text" id="track_id" placeholder="Track ID" required>
       <input type="text" id="goods" placeholder="Goods" required>
       <input type="number" id="amount" placeholder="Amount" required>
-      <select id="paid">
-        <option value="true">Paid</option>
-        <option value="false">Not Paid</option>
-      </select>
       <select id="status">
         <option value="Pending">Pending</option>
         <option value="Delivered">Delivered</option>
@@ -92,7 +88,6 @@
           <th>Track ID</th>
           <th>Goods</th>
           <th>Amount</th>
-          <th>Paid</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -130,7 +125,6 @@
         track_id: track_id.value,
         goods: goods.value,
         amount: parseFloat(amount.value),
-      extra: paid.value === "true",
         status: status.value,
       };
 
@@ -183,7 +177,7 @@
     // DELETE
     window.deleteOrder = async (id) => {
       if (confirm("Are you sure you want to delete this order?")) {
-        await supabase.from("Order").delete().eq("id", id);
+        await supabase.from("orders").delete().eq("id", id);
         loadOrders();
       }
     };
