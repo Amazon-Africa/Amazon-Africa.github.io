@@ -58,38 +58,38 @@
 </head>
 <body>
   <h1>Order Details</h1>
-  <div id="order" class="order-card"></div>
+  <div id="order" class="order-card"><p>Loading order details...</p></div>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    const SUPABASE_URL = "https://uareyvicfwneodbzjgwo.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmV5dmljZnduZW9kYnpqZ3dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MTEzODksImV4cCI6MjA3NzA4NzM4OX0.L_o53GwxnN3q3XMhq1X9VtFNRbydWmU_qz01eTuyO8I"; // replace with real anon key
-    
+    const supabaseUrl = 'https://uareyvicfwneodbzjgwo.supabase.co'
+    const supabaseKey = 'YOUR_ANON_KEY' // replace with your anon key
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     const orderContainer = document.getElementById("order")
 
-    // Try to load order data from localStorage
-    let data = JSON.parse(localStorage.getItem("orderData"))
-    const trackId = localStorage.getItem("trackId")
+    async function loadOrder() {
+      const trackId = localStorage.getItem("trackId")
 
-    // If data missing but trackId exists, refetch from database
-    if (!data && trackId) {
-      const { data: fresh, error } = await supabase
+      if (!trackId) {
+        orderContainer.innerHTML = "<p><b>No tracking ID found.</b></p>"
+        return
+      }
+
+      // 🔍 Fetch order details directly from Supabase
+      const { data, error } = await supabase
         .from('orders')
         .select('*')
         .eq('track_id', trackId)
         .maybeSingle()
-      if (fresh) {
-        data = fresh
-        localStorage.setItem('orderData', JSON.stringify(data))
-      }
-    }
 
-    if (!data) {
-      orderContainer.innerHTML = "<p><b>No order data found.</b></p>"
-    } else {
+      if (error || !data) {
+        console.error(error)
+        orderContainer.innerHTML = "<p><b>No order found for that tracking ID.</b></p>"
+        return
+      }
+
       const statusText = data.status || "Pending"
       const isDelivered = statusText.toLowerCase().includes("delivered")
       const note = isDelivered
@@ -106,7 +106,7 @@
         <div class="info"><b>Receiver Country:</b> ${data.country || "N/A"}</div>
 
         <div class="section-title">Tracking Info</div>
-        <div class="info"><b>Track ID:</b> ${data.track_id || "N/A"}</div>
+        <div class="info"><b>Track ID:</b> ${data.track_id}</div>
 
         <div class="section-title">Order Details</div>
         <div class="info"><b>Goods:</b> ${data.goods || "N/A"}</div>
@@ -122,6 +122,8 @@
         <button onclick="window.location.href='index.html'">← Back</button>
       `
     }
+
+    loadOrder()
   </script>
 </body>
 </html>
