@@ -135,7 +135,7 @@
       };
 
       if (orderIdInput.value) {
-        await supabase.from("Order").update(orderData).eq("id", orderIdInput.value);
+        await supabase.from("orders").update(orderData).eq("id", orderIdInput.value);
         orderIdInput.value = "";
       } else {
         await supabase.from("Order").insert([orderData]);
