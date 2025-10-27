@@ -130,7 +130,7 @@
         track_id: track_id.value,
         goods: goods.value,
         amount: parseFloat(amount.value),
-        paid: paid.value === "true",
+      extra: paid.value === "true",
         status: status.value,
       };
 
@@ -158,7 +158,6 @@
           <td>${order.track_id}</td>
           <td>${order.goods}</td>
           <td>₦${order.amount}</td>
-          <td>${order.paid ? "✅" : "❌"}</td>
           <td>${order.status}</td>
           <td>
             <button class="action-btn" onclick='editOrder(${JSON.stringify(order)})'>✏️</button>
@@ -178,8 +177,7 @@
       track_id.value = order.track_id;
       goods.value = order.goods;
       amount.value = order.amount;
-      paid.value = order.paid ? "true" : "false";
-      status.value = order.status;
+       status.value = order.status;
     };
 
     // DELETE
