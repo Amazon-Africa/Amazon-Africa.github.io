@@ -300,9 +300,9 @@ function doSearch(){
 
 function trackOrder(){
   const code = document.getElementById("trackCode").value;
-  if(code) alert("Tracking order: "+code+" (demo)");
-  else alert("Enter tracking code");
-}
+  localStorage.setItem('code',code);
+  window.location.href="check.html";
+  }
 
 // Initial render
 renderProducts();
@@ -311,6 +311,7 @@ renderProducts();
 </html>
 
                  
+
 
 
 
