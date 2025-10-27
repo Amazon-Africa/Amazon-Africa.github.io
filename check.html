@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Amazon Africa - Checking Order</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      text-align: center;
+      padding-top: 100px;
+    }
+    h2 { color: #111827; }
+    p { color: #6b7280; }
+  </style>
+</head>
+<body>
+  <h2>Checking your order...</h2>
+  <p>Please wait while we confirm your tracking number.</p>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const SUPABASE_URL = "https://uareyvicfwneodbzjgwo.supabase.co";
+    const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE"; // replace with real anon key
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const trackId = localStorage.getItem("trackId");
+
+    async function checkOrder() {
+      if (!trackId) {
+        document.body.innerHTML = "<h2>You have not made any orders.</h2>";
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("Order")
+        .select("*")
+        .eq("track_id", trackId)
+        .single();
+
+      if (error || !data) {
+        document.body.innerHTML = "<h2>YOU HAVE NOT MADE ANY ORDERS.</h2>";
+        return;
+      }
+
+      // store order details for next page
+      localStorage.setItem("orderData", JSON.stringify(data));
+      window.location.href = "exist.html";
+    }
+
+    checkOrder();
+  </script>
+</body>
+  </html>
+  
