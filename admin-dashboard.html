@@ -147,7 +147,7 @@
 
     // READ
     async function loadOrders() {
-      const { data, error } = await supabase.from("Order").select("*").order("id", { ascending: false });
+      const { data, error } = await supabase.from("orders").select("*").order("id", { ascending: false });
       if (error) return console.error(error);
 
       tableBody.innerHTML = data.map(order => `
