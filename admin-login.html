@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Amazon Africa - Admin Login</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f3f4f6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 { color: #111827; }
+    input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      margin: 10px 0;
+      width: 200px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover { background: #1e40af; }
+  </style>
+</head>
+<body>
+  <h1>Admin Access</h1>
+  <input type="password" id="adminPin" placeholder="Enter Admin PIN">
+  <button id="loginBtn">Login</button>
+
+  <script>
+    const btn = document.getElementById("loginBtn");
+    btn.addEventListener("click", () => {
+      const pin = document.getElementById("adminPin").value.trim();
+      // You can change this PIN to whatever you want
+      const correctPin = "2025africaAdmin";
+      if (pin === correctPin) {
+        localStorage.setItem("isAdmin", "true");
+        window.location.href = "admin-dashboard.html";
+      } else {
+        alert("Invalid PIN!");
+      }
+    });
+  </script>
+</body>
+  </html>
+  
