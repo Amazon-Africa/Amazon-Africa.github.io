@@ -28,25 +28,33 @@
     const trackId = localStorage.getItem("trackId");
 
     async function checkOrder() {
-    /*  if (!trackId) {
-        document.body.innerHTML = "<h2>You have not made any orders.</h2>";
-        return;
-      }
-*/
-      const { data, error } = await supabase
-        .from("Order")
-        .select("*")
-        .eq("track_id", trackId)
-        .single();
+    const input = localStorage.getItem("trackId");
+    const trackId = input.trim()
 
-      if (error || !data) {
-        document.body.innerHTML = "<h2>YOU HAVE NOT MADE ANY ORDERS.</h2>";
-        return;
-      }
+    // 1️⃣ If empty
+    if (!trackId) {
+      document.body.innerHTML = "<b>Enter tracking ID</b>"
+      return
+    }
 
-      // store order details for next page
-      localStorage.setItem("orderData", JSON.stringify(data));
-      window.location.href = "exist.html";
+    // 2️⃣ Search the orders table
+    const { data, error } = await supabase
+      .from('orders') // lowercase table name
+      .select('*')
+      .eq('track_id', trackId)
+      .maybeSingle()
+
+    // 3️⃣ If not found or error
+    if (error || !data) {
+      console.error(error)
+      document.body.innerHTML = "<b>YOU HAVE NOT MADE ANY ORDERS.</b>"
+      return
+    }
+
+    // 4️⃣ Save and redirect
+    localStorage.setItem('trackId', trackId)
+    window.location.href = 'exist.html'
+    
     }
 
     checkOrder();
