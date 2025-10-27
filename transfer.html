@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Pay by Bank Transfer — Amazon Africa</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 28px; background:#fff; color:#222; }
+  h1{ color:#e67e22; margin-bottom:6px; }
+  .summary { background:#f9f9f9; padding:14px; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.05); margin-bottom:18px; }
+  .summary p { margin:6px 0; }
+  .amount { font-weight:700; font-size:1.2rem; color:#000; }
+  .countries { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:16px; }
+  .country-card { background:#fff8e6; border-left:4px solid #b8860b; padding:12px; border-radius:8px; }
+  .bank { margin:8px 0; padding:8px; background:#fff; border-radius:6px; display:flex; gap:8px; align-items:center; justify-content:space-between; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+  .bank .meta { font-size:14px; }
+  .bank .meta .bank-name { font-weight:700; color:#333; }
+  .bank .meta .acc { color:#555; font-size:13px; margin-top:4px; }
+  button.copy { background:#f0b90b; border:none; padding:8px 10px; color:#fff; border-radius:6px; cursor:pointer; }
+  button.copy:hover{ opacity:0.95 }
+  .pay-actions { margin-top:18px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .btn { padding:12px 16px; border-radius:8px; border:none; cursor:pointer; color:#fff; font-weight:600; }
+  .btn-confirm { background:#27ae60; }
+  .btn-back { background:#3498db; }
+  .note { margin-top:12px; font-size:13px; color:#444; }
+  .small { font-size:13px; color:#666; }
+  #copyToast { position:fixed; right:18px; bottom:18px; background:#333; color:white; padding:10px 14px; border-radius:8px; display:none; opacity:0.95; }
+</style>
+</head>
+<body>
+  <h1>Pay by Bank / Mobile Transfer</h1>
+
+  <div class="summary" id="summaryBox">
+    <p class="small">You are paying for:</p>
+    <p id="itemCount" class="small"></p>
+    <p class="amount" id="totalAmount">₦0</p>
+    <p class="small">Exchange rate shown in checkout: <strong id="rateDisp">₦1470 / $1</strong></p>
+    <p class="note">Choose your country and copy the account details into your bank or mobile wallet. After completing transfer, click <strong>I've Paid</strong> and enter the transfer reference so we can confirm your order.</p>
+  </div>
+
+  <div class="countries">
+    <!-- Nigeria -->
+    <div class="country-card" id="nigeriaCard">
+      <h3>NIGERIA</h3>
+
+      <div class="bank">
+        <div class="meta">
+          <div class="bank-name">Opay (Mobile)</div>
+          <div class="acc">Account Name: Amazon Africa Ltd<br>Number: 09099998800</div>
+        </div>
+        <div>
+          <button class="copy" data-acc="Opay | Amazon Africa Ltd | 09099998800">Copy</button>
+        </div>
+      </div>
+
+      <div class="bank">
+        <div class="meta">
+          <div class="bank-name">Zenith Bank</div>
+          <div class="acc">Account Name: Amazon Africa Ltd<br>Account No: 1234567890</div>
+        </div>
+        <div><button class="copy" data-acc="Zenith Bank | Amazon Africa Ltd | 1234567890">Copy</button></div>
+      </div>
+
+      <div class="bank">
+        <div class="meta">
+          <div class="bank-name">GTBank</div>
+          <div class="acc">Account Name: Amazon Africa Ltd<br>Account No: 9876543210</div>
+        </div>
+        <div><button class="copy" data-acc="GTBank | Amazon Africa Ltd | 9876543210">Copy</button></div>
+      </div>
+    </div>
+
+    <!-- Ghana -->
+    <div class="country-card" id="ghanaCard">
+      <h3>GHANA</h3>
+      <div class="bank">
+        <div class="meta">
+          <div class="bank-name">MTN Mobile Money</div>
+          <div class="acc">Account Name: Amazon Africa GH<br>Wallet: +233 20 111 2222</div>
+        </div>
+        <div><button class="copy" data-acc="MTN MoMo | Amazon Africa GH | +233201112222">Copy</button></div>
+      </div>
+
+      <div class="bank">
+        <div class="meta">
+          <div class="bank-name">GCB Bank</div>
+          <div class="acc">Account Name: Amazon Africa GH<br>Account: 4000112233</div>
+        </div>
+        <div><button class="copy" data-acc="GCB Bank | Amazon Africa GH | 4000112233">Copy</button></div>
+      </div>
+    </div>
+
+    <!-- Kenya -->
+    <div class="country-card" id="kenyaCard">
+      <h3>KENYA</h3>
+      <div class="bank">
+        <div class="meta">
+          <div class="bank-name">M-Pesa</div>
+          <div class="acc">Account Name: Amazon Africa KE<br>Paybill: 600111</div>
+        </div>
+        <div><button class="copy" data-acc="M-Pesa | Amazon Africa KE | Paybill 600111">Copy</button></div>
+      </div>
+      <div class="bank">
+        <div class="meta">
+          <div class="bank-name">NCBA Bank</div>
+          <div class="acc">Account Name: Amazon Africa KE<br>Account: 2200113344</div>
+        </div>
+        <div><button class="copy" data-acc="NCBA | Amazon Africa KE | 2200113344">Copy</button></div>
+      </div>
+    </div>
+
+    <!-- South Africa -->
+    <div class="country-card" id="saCard">
+      <h3>SOUTH AFRICA</h3>
+      <div class="bank">
+        <div class="meta">
+          <div class="bank-name">Standard Bank</div>
+          <div class="acc">Account Name: Amazon Africa ZA<br>Account: 550011223</div>
+        </div>
+        <div><button class="copy" data-acc="Standard Bank | Amazon Africa ZA | 550011223">Copy</button></div>
+      </div>
+    </div>
+
+    <!-- UK -->
+    <div class="country-card" id="ukCard">
+      <h3>UNITED KINGDOM</h3>
+      <div class="bank">
+        <div class="meta">
+          <div class="bank-name">Barclays</div>
+          <div class="acc">Account Name: Amazon Africa UK<br>Sort: 20-11-33 | Acc: 11223344</div>
+        </div>
+        <div><button class="copy" data-acc="Barclays | Amazon Africa UK | Sort 20-11-33 Acc 11223344">Copy</button></div>
+      </div>
+    </div>
+
+    <!-- USA -->
+    <div class="country-card" id="usaCard">
+      <h3>UNITED STATES</h3>
+      <div class="bank">
+        <div class="meta">
+          <div class="bank-name">ACH / Bank Transfer</div>
+          <div class="acc">Account Name: Amazon Africa US<br>Routing: 11000022 | Acc: 55667788</div>
+        </div>
+        <div><button class="copy" data-acc="ACH | Amazon Africa US | Routing 11000022 Acc 55667788">Copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pay-actions" style="margin-top:20px;">
+    <button class="btn btn-back" onclick="window.location.href='checkout.html'">Back to Checkout</button>
+    <button class="btn btn-confirm" onclick="confirmPaid()">I've Paid — Submit Transfer</button>
+  </div>
+
+  <p class="small" style="margin-top:12px;">After you click <strong>I've Paid</strong> you'll be asked to enter the transfer reference so we can verify your payment. We will notify you by email/SMS once your payment is confirmed.</p>
+
+  <div id="copyToast">Copied to clipboard</div>
+
+<script>
+  const USD_TO_NGN = 1470;
+  // Read cart total from localStorage (same key used by checkout)
+  const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+  let totalNgn = 0;
+  cart.forEach(item => totalNgn += (item.price || 0) * USD_TO_NGN);
+  document.getElementById('totalAmount').innerText = `Total to Pay: ₦${totalNgn.toLocaleString()}`;
+  document.getElementById('itemCount').innerText = `${cart.length} item${cart.length!==1?'s':''} in cart`;
+  document.getElementById('rateDisp').innerText = `₦${USD_TO_NGN} / $1`;
+
+  // copy buttons
+  document.querySelectorAll('button.copy').forEach(btn=>{
+    btn.addEventListener('click', async ()=> {
+      const txt = btn.getAttribute('data-acc');
+      try {
+        await navigator.clipboard.writeText(txt);
+        const t = document.getElementById('copyToast');
+        t.style.display='block';
+        setTimeout(()=> t.style.display='none', 1600);
+      } catch(e) {
+        alert('Copy failed — please copy manually:\\n' + txt);
+      }
+    });
+  });
+
+  function confirmPaid(){
+    if(!cart || cart.length===0){ alert('Your cart is empty.'); return; }
+
+    const reference = prompt('Enter your bank/transfer reference (e.g. TRANS123456):');
+    if(!reference){ alert('Payment not submitted — reference required.'); return; }
+
+    // Build a payment record (you can send this to your server)
+    const paymentRecord = {
+      method: 'bank_transfer',
+      reference,
+      amount_ngn: totalNgn,
+      items: cart,
+      timestamp: new Date().toISOString()
+    };
+
+    // Save to localStorage (or POST to server)
+    const payments = JSON.parse(localStorage.getItem('submittedPayments') || '[]');
+    payments.push(paymentRecord);
+    localStorage.setItem('submittedPayments', JSON.stringify(payments));
+
+    // Optional: clear cart (comment out if you prefer)
+    localStorage.removeItem('cartItems');
+
+    alert('Payment submitted. Thank you! We will verify and confirm shortly.');
+    // redirect to order confirmation or homepage
+    window.location.href = 'order_confirm.html';
+  }
+</script>
+</body>
+  </html>
+          
