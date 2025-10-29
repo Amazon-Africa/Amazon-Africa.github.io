@@ -61,7 +61,11 @@
 <body>
   <h1>Order Details</h1>
   <div id="order" class="order-card"><p>Loading order details...</p></div>
-
+<div id="pay" class=order-card"><p>YOUR ORDER HAS ARRIVED NIGERIA</p>
+<br> You are expected to pay the local delivery fee of #14650 to get your goods delivered to your desired location. This apply only to international orders
+<p>LOCAL DELIVERY AMOUNT=#14650</p>
+  <button onClick="pay()" > PAY NOW</button>
+  </div>
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -123,6 +127,11 @@
 
         <button onclick="window.location.href='index.html'">← Back</button>
       `
+      if(data.status=="pending"){
+
+
+        
+      }
     }
 
     loadOrder()
