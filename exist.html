@@ -61,11 +61,7 @@
 <body>
   <h1>Order Details</h1>
   <div id="order" class="order-card"><p>Loading order details...</p></div>
-<div id="pay" class=order-card"><p>YOUR ORDER HAS ARRIVED NIGERIA</p>
-<br> You are expected to pay the local delivery fee of #14650 to get your goods delivered to your desired location. This apply only to international orders
-<p>LOCAL DELIVERY AMOUNT=#14650</p>
-  <button onClick="pay()" > PAY NOW</button>
-  </div>
+<div id="pay" class=order-card"></div>
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -73,7 +69,7 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmV5dmljZnduZW9kYnpqZ3dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MTEzODksImV4cCI6MjA3NzA4NzM4OX0.L_o53GwxnN3q3XMhq1X9VtFNRbydWmU_qz01eTuyO8I"; // replace with real anon key
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const orderContainer = document.getElementById("order")
-
+    const pay=document.getElementById("pay");
     async function loadOrder() {
       const trackId = localStorage.getItem("trackId")
 
@@ -129,7 +125,13 @@
       `
       if(data.status=="pending"){
 
-
+pay.innerHTML=` 
+<p>YOUR ORDER HAS ARRIVED NIGERIA</p>
+<br> You are expected to pay the local delivery fee of #14650 to get your goods delivered to your desired location. This apply only to international orders
+<p>LOCAL DELIVERY AMOUNT=#14650</p>
+  <button onClick="pay()" > PAY NOW</button>
+  </div>
+`
         
       }
     }
