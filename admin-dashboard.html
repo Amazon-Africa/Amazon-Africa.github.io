@@ -58,12 +58,11 @@
 <body>
   <h1>Admin Dashboard</h1>
 
-  <!-- 🟩 FORM: Add / Update Order -->
+  <!-- 🟩 Add / Update Order -->
   <div class="form-section">
     <h2>Add / Update Order</h2>
     <form id="orderForm">
       <input type="hidden" id="orderId">
-
       <input type="text" id="sender_name" placeholder="Sender Name" required>
       <input type="text" id="sender_country" placeholder="Sender Country" required>
       <input type="text" id="receiver_name" placeholder="Receiver Name" required>
@@ -82,10 +81,10 @@
     </form>
   </div>
 
-  <!-- 🟦 QUICK EDIT STATUS SECTION -->
+  <!-- 🟦 Quick Edit Status -->
   <div class="status-section">
     <h2>Edit Status</h2>
-    <p>Enter a valid Track ID and select a new status to quickly update order status.</p>
+    <p>Enter a valid Track ID and select a new status to quickly update an order.</p>
     <input type="text" id="track_id_edit" placeholder="Enter Track ID" required>
     <select id="status_edit">
       <option value="pending">Pending</option>
@@ -96,7 +95,7 @@
     <p id="statusMessage" style="margin-top:10px; font-weight:bold;"></p>
   </div>
 
-  <!-- 🟨 TABLE: All Orders -->
+  <!-- 🟨 Orders Table -->
   <div class="table-section">
     <h2>All Orders</h2>
     <table id="ordersTable">
@@ -123,6 +122,7 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmV5dmljZnduZW9kYnpqZ3dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MTEzODksImV4cCI6MjA3NzA4NzM4OX0.L_o53GwxnN3q3XMhq1X9VtFNRbydWmU_qz01eTuyO8I";
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // Restrict access
     if (localStorage.getItem("isAdmin") !== "true") {
       alert("Access denied!");
       window.location.href = "admin-login.html";
@@ -132,7 +132,7 @@
     const tableBody = document.querySelector("#ordersTable tbody");
     const orderIdInput = document.getElementById("orderId");
 
-    // 🟩 CREATE or UPDATE full order
+    // ✅ ADD / UPDATE ORDER
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -147,21 +147,31 @@
         status: status.value.toLowerCase(),
       };
 
+      let response;
       if (orderIdInput.value) {
-        await supabase.from("orders").update(orderData).eq("id", orderIdInput.value);
+        response = await supabase.from("orders").update(orderData).eq("id", orderIdInput.value);
         orderIdInput.value = "";
       } else {
-        await supabase.from("orders").insert([orderData]);
+        response = await supabase.from("orders").insert([orderData]);
+      }
+
+      if (response.error) {
+        alert("❌ Failed to save order:\n\n" + response.error.message);
+      } else {
+        alert("✅ Order saved successfully!");
       }
 
       form.reset();
       loadOrders();
     });
 
-    // 🟨 READ
+    // 🧾 LOAD ORDERS
     async function loadOrders() {
       const { data, error } = await supabase.from("orders").select("*").order("id", { ascending: false });
-      if (error) return console.error(error);
+      if (error) {
+        alert("⚠️ Failed to load orders: " + error.message);
+        return;
+      }
 
       tableBody.innerHTML = data.map(order => `
         <tr>
@@ -180,7 +190,7 @@
       `).join("");
     }
 
-    // 🟦 EDIT existing order
+    // ✏️ EDIT ORDER
     window.editOrder = (order) => {
       orderId.value = order.id;
       sender_name.value = order.sender_name;
@@ -193,7 +203,7 @@
       status.value = (order.status || "").toLowerCase();
     };
 
-    // 🟥 DELETE order
+    // 🗑️ DELETE ORDER
     window.deleteOrder = async (id) => {
       if (confirm("Are you sure you want to delete this order?")) {
         await supabase.from("orders").delete().eq("id", id);
@@ -201,7 +211,7 @@
       }
     };
 
-    // 🟦 QUICK STATUS UPDATE
+    // ⚡ QUICK STATUS UPDATE
     const updateStatusBtn = document.getElementById("updateStatusBtn");
     const statusMsg = document.getElementById("statusMessage");
 
@@ -218,19 +228,14 @@
       const { data, error } = await supabase
         .from("orders")
         .update({ status: newStatus })
-        .eq("track_id", trackId)
-        .select();
+        .eq("track_id", trackId);
 
       if (error) {
-        console.error(error);
-        statusMsg.style.color = "red";
-        statusMsg.textContent = "❌ Failed to update status.";
-      } else if (data.length === 0) {
-        statusMsg.style.color = "orange";
-        statusMsg.textContent = "⚠️ No order found with that Track ID.";
+        alert("❌ Failed to update status:\n\n" + error.message);
+      } else if (!data || data.length === 0) {
+        alert("⚠️ No order found with that Track ID.");
       } else {
-        statusMsg.style.color = "green";
-        statusMsg.textContent = "✅ Status updated successfully!";
+        alert("✅ Status updated successfully!");
         loadOrders();
       }
     });
@@ -238,4 +243,5 @@
     loadOrders();
   </script>
 </body>
-</html>
+            </html>
+  
