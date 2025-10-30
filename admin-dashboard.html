@@ -58,11 +58,12 @@
 <body>
   <h1>Admin Dashboard</h1>
 
-  <!-- 🟩 Add / Update Order -->
+  <!-- 🟩 FORM: Add / Update Order -->
   <div class="form-section">
     <h2>Add / Update Order</h2>
     <form id="orderForm">
       <input type="hidden" id="orderId">
+
       <input type="text" id="sender_name" placeholder="Sender Name" required>
       <input type="text" id="sender_country" placeholder="Sender Country" required>
       <input type="text" id="receiver_name" placeholder="Receiver Name" required>
@@ -70,16 +71,18 @@
       <input type="text" id="track_id" placeholder="Track ID" required>
       <input type="text" id="goods" placeholder="Goods" required>
       <input type="number" id="amount" placeholder="Amount" required>
+
       <select id="status">
         <option value="pending">Pending</option>
         <option value="in transit">In Transit</option>
         <option value="delivered">Delivered</option>
       </select>
+
       <button type="submit">Save</button>
     </form>
   </div>
 
-  <!-- 🟦 Edit Status Only -->
+  <!-- 🟦 QUICK EDIT STATUS SECTION -->
   <div class="status-section">
     <h2>Edit Status</h2>
     <p>Enter a valid Track ID and select a new status to quickly update order status.</p>
@@ -93,7 +96,7 @@
     <p id="statusMessage" style="margin-top:10px; font-weight:bold;"></p>
   </div>
 
-  <!-- 🟨 Orders Table -->
+  <!-- 🟨 TABLE: All Orders -->
   <div class="table-section">
     <h2>All Orders</h2>
     <table id="ordersTable">
@@ -120,7 +123,6 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmV5dmljZnduZW9kYnpqZ3dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MTEzODksImV4cCI6MjA3NzA4NzM4OX0.L_o53GwxnN3q3XMhq1X9VtFNRbydWmU_qz01eTuyO8I";
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Restrict access
     if (localStorage.getItem("isAdmin") !== "true") {
       alert("Access denied!");
       window.location.href = "admin-login.html";
@@ -130,17 +132,17 @@
     const tableBody = document.querySelector("#ordersTable tbody");
     const orderIdInput = document.getElementById("orderId");
 
-    // CREATE / UPDATE
+    // 🟩 CREATE or UPDATE full order
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const orderData = {
-        sender_name: sender_name.value,
-        sender_country: sender_country.value,
-        receiver_name: receiver_name.value,
-        country: country.value,
-        track_id: track_id.value,
-        goods: goods.value,
+        sender_name: sender_name.value.trim(),
+        sender_country: sender_country.value.trim(),
+        receiver_name: receiver_name.value.trim(),
+        country: country.value.trim(),
+        track_id: track_id.value.trim(),
+        goods: goods.value.trim(),
         amount: parseFloat(amount.value),
         status: status.value.toLowerCase(),
       };
@@ -156,13 +158,9 @@
       loadOrders();
     });
 
-    // READ
+    // 🟨 READ
     async function loadOrders() {
-      const { data, error } = await supabase
-        .from("orders")
-        .select("*")
-        .order("id", { ascending: false });
-
+      const { data, error } = await supabase.from("orders").select("*").order("id", { ascending: false });
       if (error) return console.error(error);
 
       tableBody.innerHTML = data.map(order => `
@@ -182,7 +180,7 @@
       `).join("");
     }
 
-    // EDIT
+    // 🟦 EDIT existing order
     window.editOrder = (order) => {
       orderId.value = order.id;
       sender_name.value = order.sender_name;
@@ -195,7 +193,7 @@
       status.value = (order.status || "").toLowerCase();
     };
 
-    // DELETE
+    // 🟥 DELETE order
     window.deleteOrder = async (id) => {
       if (confirm("Are you sure you want to delete this order?")) {
         await supabase.from("orders").delete().eq("id", id);
@@ -203,7 +201,7 @@
       }
     };
 
-    // QUICK STATUS UPDATE
+    // 🟦 QUICK STATUS UPDATE
     const updateStatusBtn = document.getElementById("updateStatusBtn");
     const statusMsg = document.getElementById("statusMessage");
 
@@ -220,13 +218,14 @@
       const { data, error } = await supabase
         .from("orders")
         .update({ status: newStatus })
-        .eq("track_id", trackId);
+        .eq("track_id", trackId)
+        .select();
 
       if (error) {
         console.error(error);
         statusMsg.style.color = "red";
         statusMsg.textContent = "❌ Failed to update status.";
-      } else if (!data || data.length === 0) {
+      } else if (data.length === 0) {
         statusMsg.style.color = "orange";
         statusMsg.textContent = "⚠️ No order found with that Track ID.";
       } else {
@@ -239,5 +238,4 @@
     loadOrders();
   </script>
 </body>
-        </html>
-        
+</html>
