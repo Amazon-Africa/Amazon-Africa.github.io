@@ -1,101 +1,196 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Amazon Africa - Order Details</title>
+  <title>Amazon Africa - Track Order</title>
   <style>
     body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: #f8fafc;
-      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7f9fb;
+      color: #222;
       padding: 20px;
-    }
-    h1 { text-align: center; color: #111827; margin-bottom: 30px; }
-    .order-card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      padding: 20px;
-      max-width: 500px;
+      max-width: 600px;
       margin: 0 auto;
     }
+
+    h1 {
+      text-align: center;
+      color: #222;
+      margin-bottom: 10px;
+    }
+
     .section-title {
+      margin-top: 18px;
       font-weight: bold;
-      color: #2563eb;
-      margin-top: 10px;
+      border-bottom: 1px solid #ddd;
+      color: #444;
     }
-    .info { margin: 4px 0; color: #374151; }
-    .status {
-      margin-top: 10px;
-      padding: 6px 10px;
-      border-radius: 6px;
-      display: inline-block;
-      font-weight: bold;
-      font-size: 0.9em;
+
+    .info {
+      margin: 5px 0;
     }
-    .status-pending { background: #fef3c7; color: #92400e; }
-    .status-delivered { background: #dcfce7; color: #166534; }
+
     .note {
-      margin-top: 10px;
-      color: #6b7280;
-      font-size: 0.9em;
-      font-style: italic;
-    }
-    button {
       margin-top: 20px;
-      display: block;
-      width: 100%;
-      padding: 10px;
-      border: none;
-      background: #2563eb;
-      color: white;
-      font-size: 1em;
+      padding: 15px;
       border-radius: 8px;
+      background: #f1f1f1;
+    }
+
+    .highlight {
+      background: #fff8e1;
+      border: 1px solid #fbc02d;
+    }
+
+    .delivered {
+      background: #e8f5e9;
+      border: 1px solid #4caf50;
+    }
+
+    .pending {
+      background: #e3f2fd;
+      border: 1px solid #64b5f6;
+    }
+
+    button {
+      margin-top: 15px;
+      background: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
     }
-    button:hover { background: #1e40af; }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .backBtn {
+      background: #555;
+      margin-top: 25px;
+    }
+
+    .backBtn:hover {
+      background: #333;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 13px;
+      margin-top: 40px;
+      color: #555;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .logo img {
+      width: 140px;
+    }
+
+    /* Loading animation */
+    .loading {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+      margin-top: 30px;
+    }
+
+    .spinner {
+      margin: 10px auto;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #007bff;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
+
 <body>
-  <h1>Order Details</h1>
-  <div id="order" class="order-card"><p>Loading order details...</p></div>
-<div id="pay" class=order-card"></div>
+  <div class="logo">
+    <img src="assets/amazon-africa-logo.png" alt="Amazon Africa Logo" />
+  </div>
+
+  <h1>Track Your Order</h1>
+
+  <!-- Default visible text before JS loads -->
+  <div id="order">
+    <div class="loading">
+      <div class="spinner"></div>
+      Loading order details...
+    </div>
+  </div>
+
+  <div class="footer">
+    © 2025 Amazon Africa | All rights reserved.
+  </div>
+
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
     const SUPABASE_URL = "https://uareyvicfwneodbzjgwo.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmV5dmljZnduZW9kYnpqZ3dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MTEzODksImV4cCI6MjA3NzA4NzM4OX0.L_o53GwxnN3q3XMhq1X9VtFNRbydWmU_qz01eTuyO8I"; // replace with real anon key
+    const SUPABASE_ANON_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmV5dmljZnduZW9kYnpqZ3dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MTEzODksImV4cCI6MjA3NzA4NzM4OX0.L_o53GwxnN3q3XMhq1X9VtFNRbydWmU_qz01eTuyO8I";
+
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const orderContainer = document.getElementById("order")
-    const pay=document.getElementById("pay");
+    const orderContainer = document.getElementById("order");
+
     async function loadOrder() {
-      const trackId = localStorage.getItem("trackId")
+      const trackId = localStorage.getItem("trackId");
 
       if (!trackId) {
-        orderContainer.innerHTML = "<p><b>No tracking ID found.</b></p>"
-        return
+        orderContainer.innerHTML = "<p><b>No tracking ID found.</b></p>";
+        return;
       }
 
-      // 🔍 Fetch order details directly from Supabase
       const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('track_id', trackId)
-        .maybeSingle()
+        .from("orders")
+        .select("*")
+        .eq("track_id", trackId)
+        .maybeSingle();
 
       if (error || !data) {
-        console.error(error)
-        orderContainer.innerHTML = "<p><b>No order found for that tracking ID.</b></p>"
-        return
+        console.error(error);
+        orderContainer.innerHTML =
+          "<p><b>No order found for that tracking ID.</b></p>";
+        return;
       }
 
-      const statusText = data.status || "Pending"
-      const isDelivered = statusText.toLowerCase().includes("delivered")
-      const note = isDelivered
-        ? "Order has arrived in Africa. Await final delivery."
-        : "Check back within 12 hours to know if order has arrived."
+      const status = (data.status || "").toLowerCase();
+      let note = "";
+
+      if (status === "pending") {
+        note = `
+          <div class="note pending">
+            <p>Your order is still being processed. Please check back within 12 hours for an update.</p>
+          </div>
+        `;
+      } else if (status === "in transit") {
+        note = `
+          <div class="note highlight">
+            <p><b>Good news!</b> Your order has arrived in Africa and is ready for local delivery.</p>
+            <p>To complete delivery, a <b>local delivery and clearance fee of ₦14,650</b> is required. This covers logistics, customs, and final doorstep delivery.</p>
+            <button id="payNowBtn">PAY NOW</button>
+          </div>
+        `;
+      } else if (status === "delivered") {
+        note = `
+          <div class="note delivered">
+            <p><b>Order has been successfully delivered. ✅</b></p>
+          </div>
+        `;
+      }
 
       orderContainer.innerHTML = `
         <div class="section-title">Sender Details</div>
@@ -112,31 +207,25 @@
         <div class="section-title">Order Details</div>
         <div class="info"><b>Goods:</b> ${data.goods || "N/A"}</div>
         <div class="info"><b>Amount:</b> ₦${Number(data.amount || 0).toLocaleString()}</div>
-        <div class="info">PAID ✅</div>
-     
-        <div class="section-title">Delivery Status</div>
-        <div class="status ${isDelivered ? "status-delivered" : "status-pending"}">
-          ${statusText}
-        </div>
+        <div class="info"><b>Status:</b> ${data.status || "N/A"}</div>
 
-        <div class="note">${note}</div>
+        ${note}
 
-        <button onclick="window.location.href='index.html'">← Back</button>
-      `
-      if(data.status=="pending"){
+        <button class="backBtn" onclick="window.location.href='index.html'">← Back</button>
+      `;
 
-pay.innerHTML=` 
-<p>YOUR ORDER HAS ARRIVED NIGERIA</p>
-<br> You are expected to pay the local delivery fee of #14650 to get your goods delivered to your desired location. This apply only to international orders
-<p>LOCAL DELIVERY AMOUNT=#14650</p>
-  <button onClick="pay()" > PAY NOW</button>
-  </div>
-`
-        
+      // Handle pay button click
+      if (status === "in transit") {
+        const payNowBtn = document.getElementById("payNowBtn");
+        if (payNowBtn) {
+          payNowBtn.addEventListener("click", () => {
+            window.location.href = "pay.html";
+          });
+        }
       }
     }
 
-    loadOrder()
+    loadOrder();
   </script>
 </body>
 </html>
