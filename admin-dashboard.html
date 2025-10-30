@@ -13,7 +13,7 @@
       text-align: center;
       color: #111827;
     }
-    .form-section, .table-section {
+    .form-section, .table-section, .status-section {
       background: #fff;
       padding: 20px;
       border-radius: 12px;
@@ -57,6 +57,8 @@
 </head>
 <body>
   <h1>Admin Dashboard</h1>
+
+  <!-- 🟩 Existing Form Section -->
   <div class="form-section">
     <h2>Add / Update Order</h2>
     <form id="orderForm">
@@ -68,15 +70,32 @@
       <input type="text" id="track_id" placeholder="Track ID" required>
       <input type="text" id="goods" placeholder="Goods" required>
       <input type="number" id="amount" placeholder="Amount" required>
+
       <select id="status">
-        <option value="Pending">Pending</option>
-        <option value="Delivered">Delivered</option>
-        <option value="In Transit">In Transit</option>
+        <option value="pending">Pending</option>
+        <option value="in transit">In Transit</option>
+        <option value="delivered">Delivered</option>
       </select>
+
       <button type="submit">Save</button>
     </form>
   </div>
 
+  <!-- 🟦 NEW SECTION: Quick Edit Status -->
+  <div class="status-section">
+    <h2>Edit Status</h2>
+    <p>Enter a valid Track ID and select a new status to quickly update order status.</p>
+    <input type="text" id="track_id_edit" placeholder="Enter Track ID" required>
+    <select id="status_edit">
+      <option value="pending">Pending</option>
+      <option value="in transit">In Transit</option>
+      <option value="delivered">Delivered</option>
+    </select>
+    <button id="updateStatusBtn">Update Status</button>
+    <p id="statusMessage" style="margin-top:10px; font-weight:bold;"></p>
+  </div>
+
+  <!-- 🟨 Existing Table Section -->
   <div class="table-section">
     <h2>All Orders</h2>
     <table id="ordersTable">
@@ -97,13 +116,12 @@
   </div>
 
   <script type="module">
-
-      import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
     const SUPABASE_URL = "https://uareyvicfwneodbzjgwo.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmV5dmljZnduZW9kYnpqZ3dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MTEzODksImV4cCI6MjA3NzA4NzM4OX0.L_o53GwxnN3q3XMhq1X9VtFNRbydWmU_qz01eTuyO8I"; // replace with real anon key
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmV5dmljZnduZW9kYnpqZ3dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MTEzODksImV4cCI6MjA3NzA4NzM4OX0.L_o53GwxnN3q3XMhq1X9VtFNRbydWmU_qz01eTuyO8I";
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    
+
     // Ensure only admin can access
     if (localStorage.getItem("isAdmin") !== "true") {
       alert("Access denied!");
@@ -114,9 +132,10 @@
     const tableBody = document.querySelector("#ordersTable tbody");
     const orderIdInput = document.getElementById("orderId");
 
-    // CREATE / UPDATE
+    // CREATE / UPDATE FULL ORDER
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+
       const orderData = {
         sender_name: sender_name.value,
         sender_country: sender_country.value,
@@ -125,7 +144,7 @@
         track_id: track_id.value,
         goods: goods.value,
         amount: parseFloat(amount.value),
-        status: status.value,
+        status: status.value.toLowerCase(),
       };
 
       if (orderIdInput.value) {
@@ -161,7 +180,7 @@
       `).join("");
     }
 
-    // UPDATE
+    // UPDATE existing (edit button)
     window.editOrder = (order) => {
       orderId.value = order.id;
       sender_name.value = order.sender_name;
@@ -171,7 +190,7 @@
       track_id.value = order.track_id;
       goods.value = order.goods;
       amount.value = order.amount;
-       status.value = order.status;
+      status.value = (order.status || "").toLowerCase();
     };
 
     // DELETE
@@ -182,8 +201,40 @@
       }
     };
 
+    // 🆕 QUICK STATUS UPDATE LOGIC
+    const updateStatusBtn = document.getElementById("updateStatusBtn");
+    const statusMsg = document.getElementById("statusMessage");
+
+    updateStatusBtn.addEventListener("click", async () => {
+      const trackId = document.getElementById("track_id_edit").value.trim();
+      const newStatus = document.getElementById("status_edit").value.toLowerCase();
+
+      if (!trackId) {
+        statusMsg.style.color = "red";
+        statusMsg.textContent = "⚠️ Please enter a Track ID.";
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("orders")
+        .update({ status: newStatus })
+        .eq("track_id", trackId);
+
+      if (error) {
+        console.error(error);
+        statusMsg.style.color = "red";
+        statusMsg.textContent = "❌ Failed to update status.";
+      } else if (data.length === 0) {
+        statusMsg.style.color = "orange";
+        statusMsg.textContent = "⚠️ No order found with that Track ID.";
+      } else {
+        statusMsg.style.color = "green";
+        statusMsg.textContent = "✅ Status updated successfully!";
+        loadOrders();
+      }
+    });
+
     loadOrders();
   </script>
 </body>
-  </html>
-  
+</html>
