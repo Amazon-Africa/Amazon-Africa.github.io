@@ -52,7 +52,7 @@ if(cart.length === 0){
   
   tableHTML += '</table>';
   document.getElementById('cartTableContainer').innerHTML = tableHTML;
-  document.getElementById('cartTotalDisplay').innerText = `Total Amount: ₦${total.toLocaleString()} (${cart.length} item${cart.length>1?'s':''}) Congratulations🎉 you qualified for the first hundred persons to order on Amazon Africa. Youre only paying 10percent of this order. Amount payable=$#{(10/100)*(total.toLocaleString())}`;
+  document.getElementById('cartTotalDisplay').innerText = `Total Amount: ₦${total.toLocaleString()} (${cart.length} item${cart.length>1?'s':''}) Congratulations🎉 you qualified. You are among the first hundred persons to order on Amazon Africa. Youre only paying 10percent of this order. Amount payable=$#{(10/100)*(total)}`;
 }
 
 // Payment button functions
