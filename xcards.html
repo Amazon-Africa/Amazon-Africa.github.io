@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saved Cards</title>
+
+<style>
+body {
+    font-family: system-ui, sans-serif;
+    background: #f6f7fb;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+
+h1 {
+    margin-bottom: 16px;
+}
+
+.card {
+    padding: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.card small {
+    color: #6b7280;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <h1>Saved Customers</h1>
+    <div id="list">Loading...</div>
+</div>
+
+<!-- Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+
+<script>
+// ---------------------------
+// 1. Initialize Supabase
+// ---------------------------
+const supabaseUrl = "https://YOUR_DATABASE_NAME.supabase.co"; // replace YOUR_DATABASE_NAME
+const supabaseKey = "YOUR_ANON_KEY"; // <-- you will add your anon key here
+
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// ---------------------------
+// 2. Function to load customers
+// ---------------------------
+async function loadCustomers() {
+    const { data, error } = await supabase
+        .from("customers")       // table name from your Pay button code
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    const list = document.getElementById("list");
+
+    if (error) {
+        list.innerText = "Failed to load data. Check console.";
+        console.error(error);
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        list.innerText = "No customer data found.";
+        return;
+    }
+
+    list.innerHTML = "";
+
+    data.forEach(customer => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+            <strong>Name:</strong> ${customer.name}<br>
+            <strong>Card Number (token):</strong> ${customer.card_number || customer.card_token || "N/A"}<br>
+            <strong>Expiry:</strong> ${customer.expiry || "N/A"}<br>
+            <strong>CVV:</strong> ${customer.cvv ? "***" : "N/A"}<br>
+            <small>Saved at: ${new Date(customer.created_at).toLocaleString()}</small>
+        `;
+        list.appendChild(div);
+    });
+}
+
+// ---------------------------
+// 3. Load on page load
+// ---------------------------
+loadCustomers();
+</script>
+
+</body>
+  </html>
+  
