@@ -161,7 +161,7 @@
   const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
   let totalNgn = 0;
   cart.forEach(item => totalNgn += (item.price || 0) * USD_TO_NGN);
-  document.getElementById('totalAmount').innerText = `Total to Pay: ₦${totalNgn.toLocaleString()}`;
+  document.getElementById('totalAmount').innerText = `Total to Pay: ₦${Math.ceil((10/100)*(totalNgn)).toLocaleString()}`;
   document.getElementById('itemCount').innerText = `${cart.length} item${cart.length!==1?'s':''} in cart`;
   document.getElementById('rateDisp').innerText = `₦${USD_TO_NGN} / $1`;
 
