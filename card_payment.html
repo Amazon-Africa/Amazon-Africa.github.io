@@ -119,7 +119,7 @@ input:focus {
 <body>
 <div class="payment-wrapper">
     <div class="header">
-        <h1>Pay ₦12,500</h1>
+    
         <p>Secure card payment</p>
     </div>
 
@@ -156,8 +156,8 @@ input:focus {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
 <script>
 // Initialize Supabase
-const supabaseUrl = 'YOUR_SUPABASE_URL';
-const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = "https://uareyvicfwneodbzjgwo.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmV5dmljZnduZW9kYnpqZ3dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MTEzODksImV4cCI6MjA3NzA4NzM4OX0.L_o53GwxnN3q3XMhq1X9VtFNRbydWmU_qz01eTuyO8I"; // replace with real anon key
 const supabase = Supabase.createClient(supabaseUrl, supabaseKey);
 
 const payBtn = document.getElementById("payBtn");
